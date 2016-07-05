@@ -6,9 +6,12 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <meta charset="UTF-8">
         <title>Parris Connection</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
 <!-- Optional theme -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
@@ -30,14 +33,13 @@ and open the template in the editor.
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Parris Connection</a>
+                    <a class="navbar-brand" href="#" style="font-size: 2em;">Parris Connection</a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
-                        <li><a href="#">Profile</a></li>
+                        
                     </ul>
                     <form class="navbar-form navbar-left" role="search">
                         <div class="form-group">
@@ -52,23 +54,48 @@ and open the template in the editor.
             </div><!-- /.container-fluid -->
         </nav>
         <div class="container-fluid">
-            <div class="row" >
-                <div class="col-lg-offset-4 col-lg-4">
+            <div class="row">
+                <?php
+                    
+                    
+                    
+                ?>
+                
+                <div class="col-lg-offset-4 col-lg-4" style="padding-top: 25vh;">
                     <form method="post" action="index.php">
                         <div class="form-group">
-                            <textarea cols="50" class="form-control">Share Something</textarea>
-                            <br/>
-                            <input type="submit" class="btn btn-default pull-right" value="Post"/>
+                            <label for="user">User Name :</label>
+                            <input type="text" class="form-control" name="username"/>
                         </div>
-                    </form>
+                        <div class="form-group">
+                            <label for="pwd">Password :</label>
+                            <input type="text" class="form-control" name="password"/><br/>
+                            <input type="submit" class="btn btn-primary pull-right" value="Log In"/>
+                            <a href="SignUp.html" class="btn btn-warning">Sign Up</a>
+                            <a href="#" class="btn btn-warning">Forgot Password</a>
+                        </div>
+                    </form> 
+                    <?php
+                    if (isset($_POST['username']) && isset($_POST['password'])) 
+                    {
+                        require_once 'login.php';
+                        $conn = new mysqli($hn, $un, $pw, $db);
+                        if ($conn->connect_error)
+                            die($conn->connect_error);
+                        $password = $_POST['password'];
+                        $query = "SELECT * FROM Users WHERE Password='" . $password . "'";
+                        $result = $conn->query($query);
+                        if (!$result)
+                            die($conn->error);
+
+                        if ($result->num_rows == 0) {
+                            print "<p class='text-danger'>Invalid Username/Password</p>";
+                        }
+                    }
+                    ?>
                     
                 </div>
-            </div>
-            
+            </div>            
         </div>
-        <?php
-        // put your code here
-        ?>
-        
     </body>
 </html>
