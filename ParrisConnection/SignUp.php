@@ -95,18 +95,9 @@ and open the template in the editor.
         $email     = $_POST['email'];
         $username = $_POST['username'];
         $password = $_POST['password'];
-        $salt1 = "qm&h";
-        $salt2 = "pg!@";
-        $token = hash('ripemd128', "$salt1$password$salt2");
         
-        require_once 'login.php';
-        $conn = new mysqli($hn, $un, $pw, $db);
-        
-        if($conn->connect_error) die($conn->connect_error);
-        $query = "INSERT INTO Users (LastName, FirstName, UserName, Password, IsApproved, IsAdmin) VALUES('$lastName', '$firstName', '$username', '$token', '1', '1')";
-        $result = $conn->query($query); 
-        print $result;
-        if(!$result) die($conn->error);
+        require_once 'Rules.php';
+        RegisterNewUser($firstName, $lastName, $username, $password);
     }
 ?>
 

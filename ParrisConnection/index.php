@@ -78,18 +78,13 @@ and open the template in the editor.
                     <?php
                     if (isset($_POST['username']) && isset($_POST['password'])) 
                     {
-                        require_once 'login.php';
-                        $conn = new mysqli($hn, $un, $pw, $db);
-                        if ($conn->connect_error)
-                            die($conn->connect_error);
+                        
                         $password = $_POST['password'];
                         $username = $_POST['username'];
+                        require_once 'Rules.php';
                         
-                        
-                        $query = "SELECT * FROM Users WHERE UserName='$username'";
-                        $result = $conn->query($query);
-                        if (!$result) die($conn->error);
-                        elseif($result->num_rows)
+                        $result = Authenticate($username, $password);
+                        if($result->num_rows)
                         {
                             $row = $result->fetch_array(MYSQLI_NUM);
                             $result->close();
