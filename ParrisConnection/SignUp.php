@@ -6,11 +6,11 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>Parris Connection</title>
+        <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
-        <!-- Latest compiled and minified CSS -->
+         <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
 <!-- Optional theme -->
@@ -55,69 +55,58 @@ and open the template in the editor.
         </nav>
         <div class="container-fluid">
             <div class="row">
-                <?php
-                    
-                    
-                    
-                ?>
-                
-                <div class="col-lg-offset-4 col-lg-4" style="padding-top: 25vh;">
-                    <form method="post" action="index.php">
+                <div class="col-lg-offset-4 col-lg-4">
+                    <form method="post" action="SignUp.php">
                         <div class="form-group">
-                            <label for="user">User Name :</label>
+                            <label>First Name :</label>
+                            <input type="text" class="form-control" name="firstname"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name :</label>
+                            <input type="text" class="form-control" name="lastname"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Email :</label>
+                            <input type="email" class="form-control" name="email"/>
+                        </div>
+                        <div class="form-group">
+                            <label>User Name :</label>
                             <input type="text" class="form-control" name="username"/>
                         </div>
                         <div class="form-group">
-                            <label for="pwd">Password :</label>
+                            <label>Password :</label>
                             <input type="password" class="form-control" name="password"/><br/>
-                            <input type="submit" class="btn btn-primary pull-right" value="Log In"/>
-                            <a href="SignUp.php" class="btn btn-warning">Sign Up</a>
-                            <a href="#" class="btn btn-warning">Forgot Password</a>
+                            <a href="index.php" class="btn btn-warning">Login</a>
+                            <input type="submit" class="btn btn-primary pull-right"/>
                         </div>
-                    </form> 
-                    <?php
-                    if (isset($_POST['username']) && isset($_POST['password'])) 
-                    {
-                        require_once 'login.php';
-                        $conn = new mysqli($hn, $un, $pw, $db);
-                        if ($conn->connect_error)
-                            die($conn->connect_error);
-                        $password = $_POST['password'];
-                        $username = $_POST['username'];
-                        
-                        
-                        $query = "SELECT * FROM Users WHERE UserName='$username'";
-                        $result = $conn->query($query);
-                        if (!$result) die($conn->error);
-                        elseif($result->num_rows)
-                        {
-                            $row = $result->fetch_array(MYSQLI_NUM);
-                            $result->close();
-                            
-                            $salt1 = "qm&h";
-                            $salt2 = "pg!@";
-                            $token = hash('ripemd128', "$salt1$password$salt2");
-                            print $row[4] . "<br/>";
-                            print $token;
-                            if($token == $row[4])
-                            {                               
-                                print "<p class='text-success'>Login Success</p>";
-                                header("Location:home.php");
-                            }
-                            else
-                            {
-                                print "<p class='text-danger'>Invalid Username/Password</p>";
-                            }
-                        }
-                        else
-                        {
-                            die("<p class='text-danger'>Invalid Username/Password</p>");
-                        }
-                    }
-                    ?>
-                    
+                    </form>                    
                 </div>
-            </div>            
+            </div>
         </div>
     </body>
 </html>
+<?php
+    if(isset($_POST['firstname']))
+    {      
+        
+        $firstName = $_POST['firstname'];
+        $lastName  = $_POST['lastname'];
+        $username = $firstName . ' ' . $lastName;
+        $email     = $_POST['email'];
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $salt1 = "qm&h";
+        $salt2 = "pg!@";
+        $token = hash('ripemd128', "$salt1$password$salt2");
+        
+        require_once 'login.php';
+        $conn = new mysqli($hn, $un, $pw, $db);
+        
+        if($conn->connect_error) die($conn->connect_error);
+        $query = "INSERT INTO Users (LastName, FirstName, UserName, Password, IsApproved, IsAdmin) VALUES('$lastName', '$firstName', '$username', '$token', '1', '1')";
+        $result = $conn->query($query); 
+        print $result;
+        if(!$result) die($conn->error);
+    }
+?>
+
