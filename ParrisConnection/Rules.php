@@ -13,7 +13,7 @@
         }
         
         function GetData($query) 
-        {         
+        {    
            return ConnectToDB($query);
         }
               
@@ -38,6 +38,24 @@
             $token = hash('ripemd128', "$salt1$password$salt2");
             $query = "INSERT INTO Users (LastName, FirstName, UserName, Password, IsApproved, IsAdmin) VALUES('$lastName', '$firstName', '$username', '$token', '0', '0')";
             SaveData($query);
+        }
+        
+        function GetUserAccount($userid)
+        {          
+            $query = "SELECT * FROM Users WHERE Id='$userid'";
+            return GetData($query);
+        }
+        
+        function PostMessage($userid, $message)
+        {
+            $query = "INSERT INTO Messages (UserId, Message) VALUES ('$userid', '$message')";
+            SaveData($query);
+        }
+        
+        function GetMessages()
+        {
+            $query = "SELECT * FROM Messages";
+            return GetData($query);
         }
 ?>
 

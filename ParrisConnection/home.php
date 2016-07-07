@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
 <!--
 To change this license header, choose License Headers in Project Properties.
@@ -45,7 +48,20 @@ and open the template in the editor.
                         </div>
                     </form>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a>Jeremy Parris</a></li>
+                        <?php                            
+                            require_once 'Rules.php';
+                            
+                            $useraccount = GetUserAccount($_SESSION['UserId']);
+                            
+                            if($useraccount->num_rows)
+                            {
+                                $row = $useraccount->fetch_array(MYSQLI_NUM);
+                                $useraccount->close();
+                                
+                                print "<a><li>" . $row[2] . " " . $row[1] . "</a><li>" ;
+                            }
+                            
+                        ?>
                         <li><a href="#">Logout</a></li>
                     </ul>
 
@@ -54,19 +70,24 @@ and open the template in the editor.
         </nav>
         <div class="container-fluid">
 
-
             <div class="row" >
                 <div class="col-lg-offset-4 col-lg-4" style="padding-top: 10vh;">
-                    <form method="post" action="index.php">
+                    <form method="post" action="home.php">
                         <div class="form-group">
-                            <textarea cols="50" class="form-control">Share Something</textarea>
+                            <textarea cols="50" class="form-control" name="message">Share Something</textarea>
                             <br/>
                             <input type="submit" class="btn btn-primary pull-right" value="Post"/>
                             <br/><br/>
                             <hr/>
                         </div>
                     </form>
-
+                    <?php
+                        if(isset($_POST['message']))
+                        {
+                            $message = $_POST['message'];
+                            PostMessage($_SESSION['UserId'], $message);
+                        }
+                    ?>
                 </div>
                 <div class="col-lg-4" style="padding-top: 7.5vh;">
                     <h3>Friends Online</h3>
@@ -79,27 +100,25 @@ and open the template in the editor.
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-offset-4 col-lg-4">                  
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <p>Some kind of message here</p>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <p>Some kind of message here</p>
-                        </div>
-                    </div>
-                </div>
-                
+                <div class="col-lg-offset-4 col-lg-4">   
+                    <?php
+                        $postedmessages = GetMessages();
+                        $num = $postedmessages->num_rows;
+                        
+                        for($i = 0; $i < $num; ++$i)
+                        {
+                            $row = $postedmessages->fetch_array(MYSQLI_ASSOC);
+                            print "<div class='panel panel-default'>\n";
+                            print "<div class='panel-body'>\n";
+                            print "<p>".$row['Message']."</p>\n";
+                            print "</div>";
+                            print "</div>";
+                        }
+                    ?>                   
+                </div>               
             </div>
-
-
-
         </div>
-        <?php
-        // put your code here
-        ?>
+        
         
     </body>
 </html>
