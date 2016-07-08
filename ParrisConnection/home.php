@@ -39,8 +39,8 @@ and open the template in the editor.
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
-                        <li><a href="#">Profile</a></li>
+                        <li class="active"><a href="home.php">Home <span class="sr-only">(current)</span></a></li>
+                        <li><a href="profile.php">Profile</a></li>
                     </ul>
                     <form class="navbar-form navbar-left" role="search">
                         <div class="form-group">
@@ -50,17 +50,18 @@ and open the template in the editor.
                     <ul class="nav navbar-nav navbar-right">
                         <?php                            
                             require_once 'Rules.php';
-                            
-                            $useraccount = GetUserAccount($_SESSION['UserId']);
-                            
-                            if($useraccount->num_rows)
+                            if(isset($_SESSION['UserId']))
                             {
-                                $row = $useraccount->fetch_array(MYSQLI_NUM);
-                                $useraccount->close();
-                                
-                                print "<a><li>" . $row[2] . " " . $row[1] . "</a><li>" ;
+                                $useraccount = GetUserAccount($_SESSION['UserId']);
+
+                                if($useraccount->num_rows)
+                                {
+                                    $row = $useraccount->fetch_array(MYSQLI_NUM);
+                                    $useraccount->close();
+
+                                    print "<a><li>" . $row[2] . " " . $row[1] . "</a><li>" ;
+                                }
                             }
-                            
                         ?>
                         <li><a href="#">Logout</a></li>
                     </ul>

@@ -57,13 +57,7 @@ and open the template in the editor.
             </div><!-- /.container-fluid -->
         </nav>
         <div class="container-fluid">
-            <div class="row">
-                <?php
-                    
-                    
-                    
-                ?>
-                
+            <div class="row">               
                 <div class="col-lg-offset-4 col-lg-4" style="padding-top: 25vh;">
                     <form method="post" action="index.php">
                         <div class="form-group">
