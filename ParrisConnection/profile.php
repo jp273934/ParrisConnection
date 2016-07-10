@@ -13,6 +13,7 @@
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="Scripts/Scripts.js"></script>
 
 <script src="https://use.fontawesome.com/4bf83f2a2c.js"></script>
     </head>
@@ -67,147 +68,282 @@
         </nav>
         <div class="container-fluid">
             <div class="row" style="padding-top: 10vh;">
-                <div class="col-lg-4">
-                    <div class="panel panel-default panelHeight">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <h3>Introduction</h3>
-                                    <p>Some text here</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <h3>Accomplishments</h3>
-                                    <p>Some text here</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <button type="button" class="btn btn-primary">Edit</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <h3>Home</h3>
-                                    <p>Some text here</p>
+                                    <h3>About Me</h3>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <h3>Cell</h3>
-                                    <p>Some text here</p>
+                            <div class="panelHeight">
+                                <div class="row">
+                                    <div class="col-lg-2">                                  
+                                        <label>Introduction</label>                                  
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <?php
+                                            $intro = GetIntroduction($_SESSION['UserId']);
+                                            if($intro->num_rows)
+                                            {
+                                                $row = $intro->fetch_array(MYSQLI_NUM);
+                                                print "<p>" . $row[2] . "</p>";
+                                            }
+                                            else
+                                            {
+                                                print "<p>Give a description about yourself</p>";
+                                            }
+                                        ?>
+                                        
+                                        <a onclick="ToggleEdit('#introductionform')" class="btn btn-primary">Edit</a>
+                                        <form method="post" action="profile.php" id="introductionform" style="display: none;">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <br/>
+                                                    <textarea class="form-control" name="introductionbox"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <br/>
+                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                </div>
+                                            </div>                                          
+                                        </form>
+                                        <?php
+                                            if(isset($_POST['introductionbox']))
+                                            {
+                                                $introduction = $_POST['introductionbox'];
+                                                
+                                                SaveIntroduction($_SESSION['UserId'], $introduction);                                                                                              
+                                            }
+                                        ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <h3>Email</h3>
-                                    <p>Some text here</p>
+                                <div class="row">
+                                    <div class="col-lg-2">    
+                                        <br/>
+                                        <label>Accomplishments</label>                                   
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <br/>
+                                        <?php
+                                            $accom = GetAccomplishment($_SESSION['UserId']);
+                                            $row = $accom->fetch_array(MYSQLI_NUM);
+                                            
+                                            if($accom->num_rows && $row[3] != "")
+                                            {                                               
+                                                print "<p>" . $row[3] . "</p>";
+                                            }
+                                            else
+                                            {
+                                                print "<p>Give a description about yourself</p>";
+                                            }
+                                        ?>
+                                                                               
+                                        <a onclick="ToggleEdit('#accomplishmentform')" class="btn btn-primary">Edit</a>
+                                        <form method="post" action="profile.php" id="accomplishmentform" style="display: none;">
+                                            <div class="row">
+                                                <div class="col-lg-12">                                                   
+                                                    <textarea class="form-control" name="accomplishmentbox"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <br/>
+                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                </div>
+                                            </div>                                           
+                                        </form>
+                                         <?php
+                                            if(isset($_POST['accomplishmentbox']))
+                                            {
+                                                $accomplishment = $_POST['accomplishmentbox'];
+                                                
+                                                SaveAccomplishment($_SESSION['UserId'], $accomplishment);                                                                                              
+                                            }
+                                        ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <button type="button" class="btn btn-primary">Edit</button>
-                                </div>
+                                <div class="row">
+                                    <div class="col-lg-2">
+                                        <br/>
+                                        <label>Education</label>                                  
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <br/>
+                                        <p>Add education</p>
+                                        <button onclick="ToggleEdit('#educationform')" class="btn btn-primary">Edit</button>
+                                        <form method="post" action="profile.php" id="educationform" style="display: none;">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <br/>
+                                                    <textarea class="form-control" name="educationbox"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <br/>
+                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                </div>
+                                            </div>                                                                                     
+                                        </form>
+                                    </div>
+                                </div>   
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <h3>Occupation</h3>
+                                    <h3>Contact Info</h3>
+                                </div>                               
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Home</label>                                  
+                                </div>
+                                <div class="col-lg-6">
                                     <p>Some text here</p>
+                                    <a>Edit</a>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-12">
-                                    <h3>Status</h3>
+                                <div class="col-lg-6">
+                                    <label>Cell</label>                                  
+                                </div>
+                                <div class="col-lg-6">
                                     <p>Some text here</p>
+                                    <a>Edit</a>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-12">
-                                    <h3>Employment</h3>
-                                    <p>Some text here</p>
+                                <div class="col-lg-6">
+                                    <label>Email</label>                                  
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <button type="button" class="btn btn-primary">Edit</button>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>              
             </div>
             <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <h3>Education</h3>
-                                    <p>Some text here</p>
+                                    <h3>Career</h3>
                                 </div>
-                            </div>                           
+                            </div>
                             <div class="row">
-                                <div class="col-lg-12">
-                                    <button type="button" class="btn btn-primary">Edit</button>
+                                <div class="col-lg-6">
+                                    <label>Occupation</label>                                  
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Status</label>                                   
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Employment</label>                                   
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-8">
-                    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-                        <!-- Indicators -->
-                        <ol class="carousel-indicators">
-                            <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-                            <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-                        </ol>
-
-                        <!-- Wrapper for slides -->
-                        <div class="carousel-inner" role="listbox">
-                            <div class="item active">
-                                <img src="..." alt="...">
-                                <div class="carousel-caption">
-                                    ...
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h3>Personal Links</h3>
                                 </div>
                             </div>
-                            <div class="item">
-                                <img src="..." alt="...">
-                                <div class="carousel-caption">
-                                    ...
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Facebook</label>  
+                                    <i class="fa fa-facebook-square" aria-hidden="true" style="color : blue;"></i>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
                                 </div>
                             </div>
-                            ...
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Google+</label>    
+                                    <i class="fa fa-google-plus-square" aria-hidden="true" style="color: red;"></i>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>YouTube</label>    
+                                    <i class="fa fa-youtube-square" aria-hidden="true" style="color: red;"></i>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>LinkedIn</label>    
+                                    <i class="fa fa-linkedin-square" aria-hidden="true" style="color: blue;"></i>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Twitter</label>      
+                                    <i class="fa fa-twitter" aria-hidden="true" style="color: cyan;"></i>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Personal Site</label>                                   
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
+                                </div>
+                            </div>
                         </div>
-
-                        <!-- Controls -->
-                        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        
+        </div>  
     </body>
 </html>
 

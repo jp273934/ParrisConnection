@@ -22,6 +22,11 @@
             ConnectToDB($query);
         }
         
+        function RedirectPage($page)
+        {
+            header("Location : " . $page);
+        }
+        
         function Authenticate($username, $password)
         {
             $salt1 = "qm&h";
@@ -56,6 +61,50 @@
         {
             $query = "SELECT * FROM Messages";
             return GetData($query);
+        }
+        
+        function GetIntroduction($userid)
+        {
+            $query = "SELECT * FROM About WHERE UserId='$userid'";
+            return GetData($query);
+        }
+        
+        function SaveIntroduction($userid, $intro)
+        {
+            $query = "";
+            
+            if(GetIntroduction($userid)->num_rows)
+            {
+                $query = "UPDATE About SET Introduction='$intro' WHERE USERId='$userid'";
+            }
+            else
+            {
+                $query = "INSERT INTO About (UserId, Introduction) VALUES('$userid', '$intro')";               
+            }
+            
+            SaveData($query);
+        }
+        
+        function GetAccomplishment($userid)
+        {
+            $query = "SELECT * FROM About WHERE UserId='$userid'";
+            return GetData($query);
+        }
+        
+        function SaveAccomplishment($userid, $accomplishment)
+        {
+            $query = "";
+            
+            if(GetIntroduction($userid)->num_rows)
+            {
+                $query = "UPDATE About SET Accomplishments='$accomplishment' WHERE USERId='$userid'";
+            }
+            else
+            {
+                $query = "INSERT INTO About (UserId, Accomplishments) VALUES('$userid', '$accomplishment')";               
+            }
+            
+            SaveData($query);
         }
 ?>
 

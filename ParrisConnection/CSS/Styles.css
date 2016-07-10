@@ -1,4 +1,6 @@
 .panelHeight{
     height: 34vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
