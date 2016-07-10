@@ -106,5 +106,59 @@
             
             SaveData($query);
         }
+        
+        function GetContact($userid)
+        {
+            $query = "SELECT * FROM Contact WHERE UserId='$userid'";
+            return GetData($query);
+        }
+        
+        function SaveHomePhone($userid, $home)
+        {
+            $query = "";
+            
+            if(GetContact($userid)->num_rows)
+            {
+                $query = "UPDATE Contact SET Home='$home' WHERE USERId='$userid'";
+            }
+            else
+            {
+                $query = "INSERT INTO Contact (UserId, Home) VALUES('$userid', '$home')";               
+            }
+            
+            SaveData($query);
+        }
+        
+        function SaveCellPhone($userid, $cell)
+        {
+            $query = "";
+            
+            if(GetContact($userid)->num_rows)
+            {
+                $query = "UPDATE Contact SET Cell='$cell' WHERE USERId='$userid'";
+            }
+            else
+            {
+                $query = "INSERT INTO Contact (UserId, Cell) VALUES('$userid', '$cell')";               
+            }
+            
+            SaveData($query);
+        }
+        
+        function SaveEmail($userid, $email)
+        {
+            $query = "";
+            
+            if(GetContact($userid)->num_rows)
+            {
+                $query = "UPDATE Contact SET Email='$email' WHERE USERId='$userid'";
+            }
+            else
+            {
+                $query = "INSERT INTO Contact (UserId, Email) VALUES('$userid', '$email')";               
+            }
+            
+            SaveData($query);
+        }
 ?>
 

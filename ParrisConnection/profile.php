@@ -68,8 +68,8 @@
         </nav>
         <div class="container-fluid">
             <div class="row" style="padding-top: 10vh;">
-                <div class="col-lg-6">
-                    <div class="panel panel-default">
+                <div class="col-lg-4">
+                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-lg-12">
@@ -78,10 +78,10 @@
                             </div>
                             <div class="panelHeight">
                                 <div class="row">
-                                    <div class="col-lg-2">                                  
+                                    <div class="col-lg-3">                                  
                                         <label>Introduction</label>                                  
                                     </div>
-                                    <div class="col-lg-10">
+                                    <div class="col-lg-9">
                                         <?php
                                             $intro = GetIntroduction($_SESSION['UserId']);
                                             if($intro->num_rows)
@@ -121,11 +121,11 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-lg-2">    
+                                    <div class="col-lg-3">    
                                         <br/>
                                         <label>Accomplishments</label>                                   
                                     </div>
-                                    <div class="col-lg-10">
+                                    <div class="col-lg-9">
                                         <br/>
                                         <?php
                                             $accom = GetAccomplishment($_SESSION['UserId']);
@@ -166,11 +166,11 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-lg-2">
+                                    <div class="col-lg-3">
                                         <br/>
                                         <label>Education</label>                                  
                                     </div>
-                                    <div class="col-lg-10">
+                                    <div class="col-lg-9">
                                         <br/>
                                         <p>Add education</p>
                                         <button onclick="ToggleEdit('#educationform')" class="btn btn-primary">Edit</button>
@@ -194,7 +194,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="row">
@@ -203,76 +203,139 @@
                                 </div>                               
                             </div>
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-2">
                                     <label>Home</label>                                  
                                 </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
+                                <div class="col-lg-10">
+                                    <?php
+                                            $contact = GetContact($_SESSION['UserId']);
+                                            $row = $contact->fetch_array(MYSQLI_NUM);
+                                            
+                                            if($contact->num_rows && $row[2] != "")
+                                            {                                               
+                                                print "<p>" . $row[2] . "</p>";
+                                            }
+                                            else
+                                            {
+                                                print "<p>Ask for home number</p>";
+                                            }
+                                        ?>
+                                    
+                                    <button type="button" class="btn btn-primary" onclick="ToggleEdit('#homeform')">Edit</button>
+                                    <form method="post" action="profile.php" id="homeform" style="display: none;">
+                                        <div class="row">
+                                            <div class="col-lg-12">   
+                                                <br/>
+                                                <input type="text" class="form-control" name="hometextbox"></input>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <br/>
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            </div>
+                                        </div>                                           
+                                    </form>
+                                    <?php
+                                            if(isset($_POST['hometextbox']))
+                                            {
+                                                $home = $_POST['hometextbox'];
+                                                
+                                                SaveHomePhone($_SESSION['UserId'], $home);                                                                                              
+                                            }
+                                        ?>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-2">
                                     <label>Cell</label>                                  
                                 </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
+                                <div class="col-lg-10">
+                                    <?php
+                                            $contact = GetContact($_SESSION['UserId']);
+                                            $row = $contact->fetch_array(MYSQLI_NUM);
+                                            
+                                            if($contact->num_rows && $row[3] != "")
+                                            {                                               
+                                                print "<p>" . $row[3] . "</p>";
+                                            }
+                                            else
+                                            {
+                                                print "<p>Ask for mobile number</p>";
+                                            }
+                                        ?>
+                                    
+                                    <button type="button" class="btn btn-primary" onclick="ToggleEdit('#cellform')">Edit</button>
+                                    <form method="post" action="profile.php" id="cellform" style="display: none;">
+                                        <div class="row">
+                                            <div class="col-lg-12">   
+                                                <br/>
+                                                <input type="text" class="form-control" name="celltextbox"></input>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <br/>
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            </div>
+                                        </div>                                           
+                                    </form>
+                                    <?php
+                                            if(isset($_POST['celltextbox']))
+                                            {
+                                                $cell = $_POST['celltextbox'];
+                                                
+                                                SaveCellPhone($_SESSION['UserId'], $cell);                                                                                              
+                                            }
+                                        ?>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-2">
                                     <label>Email</label>                                  
                                 </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
+                                <div class="col-lg-10">
+                                    <?php
+                                            $contact = GetContact($_SESSION['UserId']);
+                                            $row = $contact->fetch_array(MYSQLI_NUM);
+                                            
+                                            if($contact->num_rows && $row[4] != "")
+                                            {                                               
+                                                print "<p>" . $row[4] . "</p>";
+                                            }
+                                            else
+                                            {
+                                                print "<p>Ask for mobile number</p>";
+                                            }
+                                        ?>
+                                    
+                                    <button type="button" class="btn btn-primary" onclick="ToggleEdit('#emailform')">Edit</button>
+                                    <form method="post" action="profile.php" id="emailform" style="display: none;">
+                                        <div class="row">
+                                            <div class="col-lg-12">   
+                                                <br/>
+                                                <input type="text" class="form-control" name="emailtextbox"></input>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <br/>
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            </div>
+                                        </div>                                           
+                                    </form>
+                                     <?php
+                                            if(isset($_POST['emailtextbox']))
+                                            {
+                                                $email = $_POST['emailtextbox'];
+                                                
+                                                SaveEmail($_SESSION['UserId'], $email);                                                                                              
+                                            }
+                                        ?>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>              
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <h3>Career</h3>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>Occupation</label>                                  
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>Status</label>                                   
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>Employment</label>                                   
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="row">
@@ -341,6 +404,61 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h3>Career</h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Occupation</label>                                  
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Status</label>                                   
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Employment</label>                                   
+                                </div>
+                                <div class="col-lg-6">
+                                    <p>Some text here</p>
+                                    <a>Edit</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 10vh;">
+                <div class="col-lg-4">
+                   
+                </div>
+                <div class="col-lg-4">
+                    
+                </div>  
+                <div class="col-lg-4">
+                    
+                </div>
+            </div>
+            <div class="row">
+                
+                <div class="col-lg-6">
+                    
                 </div>
             </div>
         </div>  
