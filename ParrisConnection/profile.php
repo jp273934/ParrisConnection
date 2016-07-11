@@ -412,15 +412,29 @@
                                     for($i = 0; $i < $num; ++$i)
                                     {
                                         $row = $links->fetch_array(MYSQLI_ASSOC);
+                                        
+                                        print "<form method='post' action='profile.php'>";
                                         print "<div class='row'>\n";
                                         print "<div class='col-lg-3'>";
                                         print GetLinkIcon($row['Type']) . "\n";
                                         print "<label>" . $row['Type'] . "</label>\n";
                                         print "</div>\n";
-                                        print "<div class='col-lg-9'>\n";
+                                        print "<div class='col-lg-6'>\n";
                                         print "<a href='" . $row['URL'] . "' target='_blank'>" . $row['Text'] . "</a>\n";
                                         print "</div>\n";
+                                        print "<div class='col-lg-1'>\n";
+                                        print "<input type='hidden' name='id' value='" . $row['Id'] . "'></input>";
+                                        print "<button type='submit' class='btn btn-primary'>Remove</button>";
                                         print "</div>\n";
+                                        print "</div>\n";
+                      
+                                        print "</form>\n";
+                                    }
+                                    
+                                    if(isset($_POST['id']))
+                                    {
+                                        $id = $_POST['id'];
+                                        DeleteLink($id);
                                     }
                             ?>
                         </div>

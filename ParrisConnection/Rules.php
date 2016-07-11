@@ -174,6 +174,12 @@
             SaveData($query);
         }
         
+        function DeleteLink($id)
+        {
+            $query = "DELETE FROM links WHERE Id ='$id'";
+            
+            SaveData($query);
+        }
         function GetLinkIcon($type)
         {
             switch($type)
