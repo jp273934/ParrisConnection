@@ -160,5 +160,35 @@
             
             SaveData($query);
         }
+        
+        function GetLink($userid)
+        {
+            $query = "SELECT * FROM Links WHERE UserId='$userid'";
+            return GetData($query);
+        }
+        
+        function SaveLink($userid, $type, $text, $url)
+        {
+            $query = "INSERT INTO Links (UserId, Type, Text, URL) VALUES('$userid', '$type', '$text', '$url')";
+                       
+            SaveData($query);
+        }
+        
+        function GetLinkIcon($type)
+        {
+            switch($type)
+            {
+                case "Facebook":
+                    return "<i class='fa fa-facebook-square' aria-hidden='true' style='color : blue;'></i>";
+                case "Googleplus":
+                    return "<i class='fa fa-google-plus-square' aria-hidden='true' style='color: red;'></i>";
+                case "Youtube":
+                    return "<i class='fa fa-youtube-square' aria-hidden='true' style='color: red;'></i>";
+                case "Linkedin":
+                    return "<i class='fa fa-linkedin-square' aria-hidden='true' style='color: blue;'></i>";
+                case "Twitter":
+                    return "<i class='fa fa-twitter' aria-hidden='true' style='color: cyan;'></i>";
+            }
+        }
 ?>
 

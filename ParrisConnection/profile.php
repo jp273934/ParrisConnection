@@ -195,7 +195,7 @@
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="panel panel-default">
+                    <div class="panel panel-default panelHeight">
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-lg-12">
@@ -248,9 +248,11 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-2">
+                                    <br/>
                                     <label>Cell</label>                                  
                                 </div>
                                 <div class="col-lg-10">
+                                    <br/>
                                     <?php
                                             $contact = GetContact($_SESSION['UserId']);
                                             $row = $contact->fetch_array(MYSQLI_NUM);
@@ -264,8 +266,9 @@
                                                 print "<p>Ask for mobile number</p>";
                                             }
                                         ?>
-                                    
+                                   
                                     <button type="button" class="btn btn-primary" onclick="ToggleEdit('#cellform')">Edit</button>
+                                    <br/>
                                     <form method="post" action="profile.php" id="cellform" style="display: none;">
                                         <div class="row">
                                             <div class="col-lg-12">   
@@ -292,9 +295,11 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-2">
+                                    <br/>
                                     <label>Email</label>                                  
                                 </div>
                                 <div class="col-lg-10">
+                                    <br/>
                                     <?php
                                             $contact = GetContact($_SESSION['UserId']);
                                             $row = $contact->fetch_array(MYSQLI_NUM);
@@ -338,70 +343,86 @@
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-body">
+                            
                             <div class="row">
                                 <div class="col-lg-12">
                                     <h3>Personal Links</h3>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-6">
-                                    <label>Facebook</label>  
-                                    <i class="fa fa-facebook-square" aria-hidden="true" style="color : blue;"></i>
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
+                                <div class="col-lg-offset-3 col-lg-9">
+                                    <button type="button" class="btn btn-primary" onclick="ToggleEdit('#linkform')">Add Link</button>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>Google+</label>    
-                                    <i class="fa fa-google-plus-square" aria-hidden="true" style="color: red;"></i>
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>YouTube</label>    
-                                    <i class="fa fa-youtube-square" aria-hidden="true" style="color: red;"></i>
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>LinkedIn</label>    
-                                    <i class="fa fa-linkedin-square" aria-hidden="true" style="color: blue;"></i>
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>Twitter</label>      
-                                    <i class="fa fa-twitter" aria-hidden="true" style="color: cyan;"></i>
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>Personal Site</label>                                   
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
-                                </div>
-                            </div>
+                            <form method="post" action="profile.php" id="linkform" style="display: none;">
+                                <div class="row">
+                                    <div class="col-lg-offset-3 col-lg-9">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <input type="text" name="secondtypelabel" style="display: none;"/>
+                                                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                    Link Type
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                                    <li><a id="FaceBookLink" aria-hidden="true" style="color : blue;"><i class="fa fa-facebook-square"></i> Facebook</a></li>
+                                                    <li><a id="GooglePlusLink"><i class="fa fa-google-plus-square" aria-hidden="true" style="color: red;"></i> Google Plus</a></li>
+                                                    <li><a id="YouTubeLink"><i class="fa fa-youtube-square" aria-hidden="true" style="color: red;"></i> You Tube</a></li>                                            
+                                                    <li><a id="LinkedInLink"><i class="fa fa-linkedin-square" aria-hidden="true" style="color: blue;"></i> Linked In</a></li>
+                                                    <li><a id="TwitterLink"><i class="fa fa-twitter" aria-hidden="true" style="color: cyan;"></i> Twitter</a></li>
+                                                    <li><a id="PersonalLink">Personal</a></li>
+                                                </ul>
+                                                <label id="typelabel"/><br/>
+                                                
+                                            </div>
+                                            
+                                            </div>
+                                            <div class="dropdown">
+                                               
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Link Text</label>
+                                            <input type="text" class="form-control" name="texttextbox"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>URL</label>
+                                            <input type="text" class="form-control" name="urltextbox"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">Add</button>
+                                        </div>
+                                    </div>
+                                </div>                               
+                                
+                            </form>
+                            
+                            <?php 
+                                    if(isset($_POST['secondtypelabel']))
+                                    {
+                                        $type = $_POST['secondtypelabel'];
+                                        $text = $_POST['texttextbox'];
+                                        $url = $_POST['urltextbox'];
+                                        
+                                        SaveLink($_SESSION['UserId'], $type, $text, $url);
+                                    }
+                                    
+                                    $links = GetLink($_SESSION['UserId']);
+                                    $num = $links->num_rows;
+                                    
+                                    for($i = 0; $i < $num; ++$i)
+                                    {
+                                        $row = $links->fetch_array(MYSQLI_ASSOC);
+                                        print "<div class='row'>\n";
+                                        print "<div class='col-lg-3'>";
+                                        print GetLinkIcon($row['Type']) . "\n";
+                                        print "<label>" . $row['Type'] . "</label>\n";
+                                        print "</div>\n";
+                                        print "<div class='col-lg-9'>\n";
+                                        print "<a href='" . $row['URL'] . "' target='_blank'>" . $row['Text'] . "</a>\n";
+                                        print "</div>\n";
+                                        print "</div>\n";
+                                    }
+                            ?>
                         </div>
                     </div>
                 </div>

@@ -89,8 +89,7 @@ and open the template in the editor.
                             $salt1 = "qm&h";
                             $salt2 = "pg!@";
                             $token = hash('ripemd128', "$salt1$password$salt2");
-//                            print $row[4] . "<br/>";
-//                            print $token;
+                            
                             if($token == $row[4])
                             {                               
                                 print "<p class='text-success'>Login Success</p>";
