@@ -3,3 +3,24 @@
     overflow-x: hidden;
 }
 
+.profileImage{
+    width : 100%;
+    height: 20%;
+}
+
+.messageImage{
+    width: 50%;
+    height : 50%;
+}
+label{
+    font-size: 1.2em;
+}
+
+p{
+    font-size: 1.2em;
+}
+
+a{
+    font-size: 1.2em;
+}
+

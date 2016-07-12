@@ -15,7 +15,7 @@ and open the template in the editor.
 
 <!-- Optional theme -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-
+<link rel="stylesheet" href="CSS/Styles.css" />
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
@@ -88,6 +88,7 @@ and open the template in the editor.
                             $message = $_POST['message'];
                             PostMessage($_SESSION['UserId'], $message);
                         }
+                        
                     ?>
                 </div>
                 <div class="col-lg-4" style="padding-top: 7.5vh;">
@@ -100,24 +101,35 @@ and open the template in the editor.
                     <label>Friend 1</label><br/>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-offset-4 col-lg-4">   
+           
+                  
                     <?php
                         $postedmessages = GetMessages();
+                        
                         $num = $postedmessages->num_rows;
                         
                         for($i = 0; $i < $num; ++$i)
                         {
                             $row = $postedmessages->fetch_array(MYSQLI_ASSOC);
+                            
+                            $photos = GetIntroduction($row['UserId']);
+                            $photonum = $photos->num_rows;
+                            $photorow = $photos->fetch_array(MYSQLI_ASSOC);
+                            
+                            print "<div class='row'>\n";
+                            print "<div class='col-lg-offset-4 col-lg-1'>\n";
+                            print "<img src='" . $photorow['ProfileImage'] . "' class='messageImage'></img>\n";
+                            print "</div>\n";
+                            print "<div class='col-lg-3'>\n";
                             print "<div class='panel panel-default'>\n";
                             print "<div class='panel-body'>\n";
                             print "<p>".$row['Message']."</p>\n";
-                            print "</div>";
-                            print "</div>";
+                            print "</div>\n";
+                            print "</div>\n";
+                            print "</div>\n";
+                            print "</div>\n";
                         }
                     ?>                   
-                </div>               
-            </div>
         </div>
         
         

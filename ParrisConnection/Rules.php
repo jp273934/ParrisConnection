@@ -185,15 +185,15 @@
             switch($type)
             {
                 case "Facebook":
-                    return "<i class='fa fa-facebook-square' aria-hidden='true' style='color : blue;'></i>";
+                    return "<i class='fa fa-facebook-square fa-2X' aria-hidden='true' style='color : blue;'></i>";
                 case "Googleplus":
-                    return "<i class='fa fa-google-plus-square' aria-hidden='true' style='color: red;'></i>";
+                    return "<i class='fa fa-google-plus-square fa-2X' aria-hidden='true' style='color: red;'></i>";
                 case "Youtube":
-                    return "<i class='fa fa-youtube-square' aria-hidden='true' style='color: red;'></i>";
+                    return "<i class='fa fa-youtube-square fa-2X' aria-hidden='true' style='color: red;'></i>";
                 case "Linkedin":
-                    return "<i class='fa fa-linkedin-square' aria-hidden='true' style='color: blue;'></i>";
+                    return "<i class='fa fa-linkedin-square fa-2X' aria-hidden='true' style='color: blue;'></i>";
                 case "Twitter":
-                    return "<i class='fa fa-twitter' aria-hidden='true' style='color: cyan;'></i>";
+                    return "<i class='fa fa-twitter fa-2X' aria-hidden='true' style='color: cyan;'></i>";
             }
         }
 ?>

@@ -68,7 +68,7 @@
         </nav>
         <div class="container-fluid">
             <div class="row" style="padding-top: 10vh;">
-                <div class="col-lg-4">
+                <div class="col-lg-5">
                      <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="row">
@@ -78,123 +78,172 @@
                             </div>
                             <div class="panelHeight">
                                 <div class="row">
-                                    <div class="col-lg-3">                                  
-                                        <label>Introduction</label>                                  
-                                    </div>
-                                    <div class="col-lg-9">
+                                    <div class="col-lg-3">
                                         <?php
-                                            $intro = GetIntroduction($_SESSION['UserId']);
-                                            if($intro->num_rows)
+                                            require_once 'Files.php';
+                                            $uploadedFiles = GetProfileImage($_SESSION['UserId']);
+                                            
+                                            if($uploadedFiles->num_rows)
                                             {
-                                                $row = $intro->fetch_array(MYSQLI_NUM);
-                                                print "<p>" . $row[2] . "</p>";
-                                            }
-                                            else
-                                            {
-                                                print "<p>Give a description about yourself</p>";
+                                                $row = $uploadedFiles->fetch_array(MYSQLI_NUM);
+                                                $uploadedFiles->close();
+                                                
+                                                print "<img src='". $row[4] . "'class='profileImage'></img>";
                                             }
                                         ?>
-                                        
-                                        <a onclick="ToggleEdit('#introductionform')" class="btn btn-primary">Edit</a>
-                                        <form method="post" action="profile.php" id="introductionform" style="display: none;">
+                                        <form method="post" action="profile.php" enctype="multipart/form-data">
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <br/>
-                                                    <textarea class="form-control" name="introductionbox"></textarea>
+                                                    <input type="file" name="fileupload"/>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <br/>
-                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                    <input type="submit" name="submit" class="btn btn-primary" value="Upload">
                                                 </div>
                                             </div>                                          
                                         </form>
-                                        <?php
-                                            if(isset($_POST['introductionbox']))
-                                            {
-                                                $introduction = $_POST['introductionbox'];
-                                                
-                                                SaveIntroduction($_SESSION['UserId'], $introduction);                                                                                              
+                                        <?php                                         
+                                        $uploadOk = 1;
+                                        if (isset($_POST["submit"])) {
+                                            $target_dir = "Photos/";
+                                            $target_file = $target_dir . basename($_FILES["fileupload"]["name"]);
+
+                                            $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+                                            $check = getimagesize($_FILES["fileupload"]["tmp_name"]);
+                                            if ($check !== false) {
+                                                //file is an image
+                                                $uploadOk = 1;
+                                            } else {
+                                                //file is not image
+                                                $uploadOk = 0;
                                             }
+
+                                            //check if file exists
+                                            if (file_exists($target_file)) {
+                                                $uploadOk = 0;
+                                            }
+
+                                            //get file size
+                                            if ($_FILES["fileupload"]["size"] > 150000) {
+                                                //file too large
+                                                $uploadOk = 0;
+                                            }
+
+                                            //limit file type
+                                            if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+                                                //invalid file type
+                                                $uploadOk = 0;
+                                            }
+
+                                            //check if upload is ok
+                                            if ($uploadOk == 0) {
+                                                //upload not valid
+                                            } else {
+                                                if (move_uploaded_file($_FILES["fileupload"]["tmp_name"], $target_file)) {
+                                                    //file was uploaded
+                                                    
+                                                    SaveProfileImage($_SESSION['UserId'], $target_file . $_FILES["fileupload"]["name"]);
+                                                    
+                                                } else {
+                                                    //upload failed
+                                                }
+                                            }
+                                        }
                                         ?>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-3">    
-                                        <br/>
-                                        <label>Accomplishments</label>                                   
                                     </div>
                                     <div class="col-lg-9">
-                                        <br/>
-                                        <?php
-                                            $accom = GetAccomplishment($_SESSION['UserId']);
-                                            $row = $accom->fetch_array(MYSQLI_NUM);
-                                            
-                                            if($accom->num_rows && $row[3] != "")
-                                            {                                               
-                                                print "<p>" . $row[3] . "</p>";
-                                            }
-                                            else
-                                            {
-                                                print "<p>Give a description about yourself</p>";
-                                            }
-                                        ?>
-                                                                               
-                                        <a onclick="ToggleEdit('#accomplishmentform')" class="btn btn-primary">Edit</a>
-                                        <form method="post" action="profile.php" id="accomplishmentform" style="display: none;">
-                                            <div class="row">
-                                                <div class="col-lg-12">                                                   
-                                                    <textarea class="form-control" name="accomplishmentbox"></textarea>
-                                                </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">                                  
+                                                <label>Introduction</label>                                  
                                             </div>
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <br/>
-                                                    <button type="submit" class="btn btn-primary">Save</button>
-                                                </div>
-                                            </div>                                           
-                                        </form>
-                                         <?php
-                                            if(isset($_POST['accomplishmentbox']))
-                                            {
-                                                $accomplishment = $_POST['accomplishmentbox'];
-                                                
-                                                SaveAccomplishment($_SESSION['UserId'], $accomplishment);                                                                                              
-                                            }
-                                        ?>
+                                            <div class="col-lg-8">
+                                                <?php
+                                                $intro = GetIntroduction($_SESSION['UserId']);
+                                                if ($intro->num_rows) {
+                                                    $row = $intro->fetch_array(MYSQLI_NUM);
+                                                    print "<p>" . $row[2] . "</p>";
+                                                } else {
+                                                    print "<p>Give a description about yourself</p>";
+                                                }
+                                                ?>
+
+                                                <a onclick="ToggleEdit('#introductionform')" class="btn btn-primary">Edit</a>
+                                                <form method="post" action="profile.php" id="introductionform" style="display: none;">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <br/>
+                                                            <textarea class="form-control" name="introductionbox"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <br/>
+                                                            <button type="submit" class="btn btn-primary">Save</button>
+                                                        </div>
+                                                    </div>                                          
+                                                </form>
+                                                <?php
+                                                if (isset($_POST['introductionbox'])) {
+                                                    $introduction = $_POST['introductionbox'];
+
+                                                    SaveIntroduction($_SESSION['UserId'], $introduction);
+                                                }
+                                                ?>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">    
+                                                <br/>
+                                                <label>Accomplishments</label>                                   
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <br/>
+                                                <?php
+                                                $accom = GetAccomplishment($_SESSION['UserId']);
+                                                $row = $accom->fetch_array(MYSQLI_NUM);
+
+                                                if ($accom->num_rows && $row[3] != "") {
+                                                    print "<p>" . $row[3] . "</p>";
+                                                } else {
+                                                    print "<p>Give a description about yourself</p>";
+                                                }
+                                                ?>
+
+                                                <a onclick="ToggleEdit('#accomplishmentform')" class="btn btn-primary">Edit</a>
+                                                <form method="post" action="profile.php" id="accomplishmentform" style="display: none;">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">                                                   
+                                                            <textarea class="form-control" name="accomplishmentbox"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <br/>
+                                                            <button type="submit" class="btn btn-primary">Save</button>
+                                                        </div>
+                                                    </div>                                           
+                                                </form>
+                                                <?php
+                                                if (isset($_POST['accomplishmentbox'])) {
+                                                    $accomplishment = $_POST['accomplishmentbox'];
+
+                                                    SaveAccomplishment($_SESSION['UserId'], $accomplishment);
+                                                }
+                                                ?>
+                                            </div>
+                                        </div>   
                                     </div>
+                                   
                                 </div>
-                                <div class="row">
-                                    <div class="col-lg-3">
-                                        <br/>
-                                        <label>Education</label>                                  
-                                    </div>
-                                    <div class="col-lg-9">
-                                        <br/>
-                                        <p>Add education</p>
-                                        <button onclick="ToggleEdit('#educationform')" class="btn btn-primary">Edit</button>
-                                        <form method="post" action="profile.php" id="educationform" style="display: none;">
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <br/>
-                                                    <textarea class="form-control" name="educationbox"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <br/>
-                                                    <button type="submit" class="btn btn-primary">Save</button>
-                                                </div>
-                                            </div>                                                                                     
-                                        </form>
-                                    </div>
-                                </div>   
+                                                           
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-3">
                     <div class="panel panel-default panelHeight">
                         <div class="panel-body">
                             <div class="row">
@@ -341,6 +390,9 @@
                             </div>
                         </div>
                     </div>
+                    
+                </div>
+                <div class="col-lg-4">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             
@@ -350,16 +402,17 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-offset-3 col-lg-9">
+                                <div class="col-lg-9">
                                     <button type="button" class="btn btn-primary" onclick="ToggleEdit('#linkform')">Add Link</button>
                                 </div>
                             </div>
                             <form method="post" action="profile.php" id="linkform" style="display: none;">
                                 <div class="row">
-                                    <div class="col-lg-offset-3 col-lg-9">
+                                    <div class="col-lg-9">
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <input type="text" name="secondtypelabel" style="display: none;"/>
+                                                <br/>
                                                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                     Link Type
                                                     <span class="caret"></span>
@@ -381,6 +434,7 @@
                                                
                                         </div>
                                         <div class="form-group">
+                                            <br/>
                                             <label>Link Text</label>
                                             <input type="text" class="form-control" name="texttextbox"/>
                                         </div>
@@ -395,7 +449,7 @@
                                 </div>                               
                                 
                             </form>
-                            
+                            <br/>
                             <?php 
                                     if(isset($_POST['secondtypelabel']))
                                     {
@@ -415,11 +469,11 @@
                                         
                                         print "<form method='post' action='profile.php'>";
                                         print "<div class='row'>\n";
-                                        print "<div class='col-lg-3'>";
+                                        print "<div class='col-lg-4'>";
                                         print GetLinkIcon($row['Type']) . "\n";
                                         print "<label>" . $row['Type'] . "</label>\n";
                                         print "</div>\n";
-                                        print "<div class='col-lg-6'>\n";
+                                        print "<div class='col-lg-5' style='padding-top : 0.5em;'>\n";
                                         print "<a href='" . $row['URL'] . "' target='_blank'>" . $row['Text'] . "</a>\n";
                                         print "</div>\n";
                                         print "<div class='col-lg-1'>\n";
@@ -439,63 +493,11 @@
                             ?>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <h3>Career</h3>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>Occupation</label>                                  
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>Status</label>                                   
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>Employment</label>                                   
-                                </div>
-                                <div class="col-lg-6">
-                                    <p>Some text here</p>
-                                    <a>Edit</a>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row" style="padding-top: 10vh;">
-                <div class="col-lg-4">
-                   
-                </div>
-                <div class="col-lg-4">
-                    
-                </div>  
-                <div class="col-lg-4">
-                    
-                </div>
-            </div>
-            <div class="row">
-                
-                <div class="col-lg-6">
-                    
-                </div>
-            </div>
+            
+            
         </div>  
     </body>
 </html>
