@@ -66,439 +66,522 @@
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
         </nav>
-        <div class="container-fluid">
-            <div class="row" style="padding-top: 10vh;">
-                <div class="col-lg-5">
-                     <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <h3>About Me</h3>
-                                </div>
-                            </div>
-                            <div class="panelHeight">
+        
+        <ul class="nav nav-tabs" style="padding-top: 7.5vh;">
+            <li class="active"><a data-toggle="tab" href="#profile">Profile</a></li>
+            <li><a data-toggle="tab" href="#photos">Photos</a></li>
+        </ul>
+       
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="profile">
+                <div class="container-fluid" style="padding-top: 5vh;">
+                <div class="row">
+                    <div class="col-lg-5">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
                                 <div class="row">
-                                    <div class="col-lg-3">
-                                        <?php
+                                    <div class="col-lg-12">
+                                        <h3>About Me</h3>
+                                    </div>
+                                </div>
+                                <div class="panelHeight">
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <?php
                                             require_once 'Files.php';
                                             $uploadedFiles = GetProfileImage($_SESSION['UserId']);
-                                            
-                                            if($uploadedFiles->num_rows)
-                                            {
+
+                                            if ($uploadedFiles->num_rows) {
                                                 $row = $uploadedFiles->fetch_array(MYSQLI_NUM);
                                                 $uploadedFiles->close();
-                                                
-                                                print "<img src='". $row[4] . "'class='profileImage'></img>";
+
+                                                print "<img src='" . $row[4] . "'class='profileImage'></img>";
                                             }
-                                        ?>
-                                        <form method="post" action="profile.php" enctype="multipart/form-data">
+                                            ?>
+                                            <form method="post" action="profile.php" enctype="multipart/form-data">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <br/>
+                                                        <input type="file" name="fileupload"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <br/>
+                                                        <input type="submit" name="submit" class="btn btn-primary" value="Upload">
+                                                    </div>
+                                                </div>                                          
+                                            </form>
+                                            <?php
+                                            $uploadOk = 1;
+                                            if (isset($_POST["submit"])) {
+                                                $target_dir = "Photos/";
+                                                $target_file = $target_dir . basename($_FILES["fileupload"]["name"]);
+
+                                                $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+                                                $check = getimagesize($_FILES["fileupload"]["tmp_name"]);
+                                                if ($check !== false) {
+                                                    //file is an image
+                                                    $uploadOk = 1;
+                                                } else {
+                                                    //file is not image
+                                                    $uploadOk = 0;
+                                                }
+
+                                                //check if file exists
+                                                if (file_exists($target_file)) {
+                                                    $uploadOk = 0;
+                                                }
+
+                                                //get file size
+                                                if ($_FILES["fileupload"]["size"] > 150000) {
+                                                    //file too large
+                                                    $uploadOk = 0;
+                                                }
+
+                                                //limit file type
+                                                if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+                                                    //invalid file type
+                                                    $uploadOk = 0;
+                                                }
+
+                                                //check if upload is ok
+                                                if ($uploadOk == 0) {
+                                                    //upload not valid
+                                                } else {
+                                                    if (move_uploaded_file($_FILES["fileupload"]["tmp_name"], $target_file)) {
+                                                        //file was uploaded
+
+                                                        SaveProfileImage($_SESSION['UserId'], $target_file . $_FILES["fileupload"]["name"]);
+                                                    } else {
+                                                        //upload failed
+                                                    }
+                                                }
+                                            }
+                                            ?>
+                                        </div>
+                                        <div class="col-lg-9">
                                             <div class="row">
-                                                <div class="col-lg-12">
+                                                <div class="col-lg-4">                                  
+                                                    <label>Introduction</label>                                  
+                                                </div>
+                                                <div class="col-lg-8">
+<?php
+$intro = GetIntroduction($_SESSION['UserId']);
+if ($intro->num_rows) {
+    $row = $intro->fetch_array(MYSQLI_NUM);
+    print "<p>" . $row[2] . "</p>";
+} else {
+    print "<p>Give a description about yourself</p>";
+}
+?>
+
+                                                    <a onclick="ToggleEdit('#introductionform')" class="btn btn-primary">Edit</a>
+                                                    <form method="post" action="profile.php" id="introductionform" style="display: none;">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <br/>
+                                                                <textarea class="form-control" name="introductionbox"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <br/>
+                                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                            </div>
+                                                        </div>                                          
+                                                    </form>
+<?php
+if (isset($_POST['introductionbox'])) {
+    $introduction = $_POST['introductionbox'];
+
+    SaveIntroduction($_SESSION['UserId'], $introduction);
+}
+?>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-4">    
                                                     <br/>
-                                                    <input type="file" name="fileupload"/>
+                                                    <label>Accomplishments</label>                                   
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <br/>
+<?php
+$accom = GetAccomplishment($_SESSION['UserId']);
+$row = $accom->fetch_array(MYSQLI_NUM);
+
+if ($accom->num_rows && $row[3] != "") {
+    print "<p>" . $row[3] . "</p>";
+} else {
+    print "<p>Give a description about yourself</p>";
+}
+?>
+
+                                                    <a onclick="ToggleEdit('#accomplishmentform')" class="btn btn-primary">Edit</a>
+                                                    <form method="post" action="profile.php" id="accomplishmentform" style="display: none;">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">                                                   
+                                                                <textarea class="form-control" name="accomplishmentbox"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <br/>
+                                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                            </div>
+                                                        </div>                                           
+                                                    </form>
+<?php
+if (isset($_POST['accomplishmentbox'])) {
+    $accomplishment = $_POST['accomplishmentbox'];
+
+    SaveAccomplishment($_SESSION['UserId'], $accomplishment);
+}
+?>
+                                                </div>
+                                            </div>   
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="panel panel-default panelHeight">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h3>Contact Info</h3>
+                                    </div>                               
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-2">
+                                        <label>Home</label>                                  
+                                    </div>
+                                    <div class="col-lg-10">
+<?php
+$contact = GetContact($_SESSION['UserId']);
+$row = $contact->fetch_array(MYSQLI_NUM);
+
+if ($contact->num_rows && $row[2] != "") {
+    print "<p>" . $row[2] . "</p>";
+} else {
+    print "<p>Ask for home number</p>";
+}
+?>
+
+                                        <button type="button" class="btn btn-primary" onclick="ToggleEdit('#homeform')">Edit</button>
+                                        <form method="post" action="profile.php" id="homeform" style="display: none;">
+                                            <div class="row">
+                                                <div class="col-lg-12">   
+                                                    <br/>
+                                                    <input type="text" class="form-control" name="hometextbox"></input>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <br/>
-                                                    <input type="submit" name="submit" class="btn btn-primary" value="Upload">
+                                                    <button type="submit" class="btn btn-primary">Save</button>
                                                 </div>
-                                            </div>                                          
+                                            </div>                                           
                                         </form>
-                                        <?php                                         
-                                        $uploadOk = 1;
-                                        if (isset($_POST["submit"])) {
-                                            $target_dir = "Photos/";
-                                            $target_file = $target_dir . basename($_FILES["fileupload"]["name"]);
+<?php
+if (isset($_POST['hometextbox'])) {
+    $home = $_POST['hometextbox'];
 
-                                            $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
-                                            $check = getimagesize($_FILES["fileupload"]["tmp_name"]);
-                                            if ($check !== false) {
-                                                //file is an image
-                                                $uploadOk = 1;
-                                            } else {
-                                                //file is not image
-                                                $uploadOk = 0;
-                                            }
+    SaveHomePhone($_SESSION['UserId'], $home);
+}
+?>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-2">
+                                        <br/>
+                                        <label>Cell</label>                                  
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <br/>
+<?php
+$contact = GetContact($_SESSION['UserId']);
+$row = $contact->fetch_array(MYSQLI_NUM);
 
-                                            //check if file exists
-                                            if (file_exists($target_file)) {
-                                                $uploadOk = 0;
-                                            }
+if ($contact->num_rows && $row[3] != "") {
+    print "<p>" . $row[3] . "</p>";
+} else {
+    print "<p>Ask for mobile number</p>";
+}
+?>
 
-                                            //get file size
-                                            if ($_FILES["fileupload"]["size"] > 150000) {
-                                                //file too large
-                                                $uploadOk = 0;
-                                            }
+                                        <button type="button" class="btn btn-primary" onclick="ToggleEdit('#cellform')">Edit</button>
+                                        <br/>
+                                        <form method="post" action="profile.php" id="cellform" style="display: none;">
+                                            <div class="row">
+                                                <div class="col-lg-12">   
+                                                    <br/>
+                                                    <input type="text" class="form-control" name="celltextbox"></input>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <br/>
+                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                </div>
+                                            </div>                                           
+                                        </form>
+<?php
+if (isset($_POST['celltextbox'])) {
+    $cell = $_POST['celltextbox'];
 
-                                            //limit file type
-                                            if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-                                                //invalid file type
-                                                $uploadOk = 0;
-                                            }
+    SaveCellPhone($_SESSION['UserId'], $cell);
+}
+?>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-2">
+                                        <br/>
+                                        <label>Email</label>                                  
+                                    </div>
+                                    <div class="col-lg-10">
+                                        <br/>
+                                        <?php
+                                        $contact = GetContact($_SESSION['UserId']);
+                                        $row = $contact->fetch_array(MYSQLI_NUM);
 
-                                            //check if upload is ok
-                                            if ($uploadOk == 0) {
-                                                //upload not valid
-                                            } else {
-                                                if (move_uploaded_file($_FILES["fileupload"]["tmp_name"], $target_file)) {
-                                                    //file was uploaded
-                                                    
-                                                    SaveProfileImage($_SESSION['UserId'], $target_file . $_FILES["fileupload"]["name"]);
-                                                    
-                                                } else {
-                                                    //upload failed
-                                                }
-                                            }
+                                        if ($contact->num_rows && $row[4] != "") {
+                                            print "<p>" . $row[4] . "</p>";
+                                        } else {
+                                            print "<p>Ask for mobile number</p>";
                                         }
                                         ?>
+
+                                        <button type="button" class="btn btn-primary" onclick="ToggleEdit('#emailform')">Edit</button>
+                                        <form method="post" action="profile.php" id="emailform" style="display: none;">
+                                            <div class="row">
+                                                <div class="col-lg-12">   
+                                                    <br/>
+                                                    <input type="text" class="form-control" name="emailtextbox"></input>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <br/>
+                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                </div>
+                                            </div>                                           
+                                        </form>
+<?php
+if (isset($_POST['emailtextbox'])) {
+    $email = $_POST['emailtextbox'];
+
+    SaveEmail($_SESSION['UserId'], $email);
+}
+?>
                                     </div>
-                                    <div class="col-lg-9">
-                                        <div class="row">
-                                            <div class="col-lg-4">                                  
-                                                <label>Introduction</label>                                  
-                                            </div>
-                                            <div class="col-lg-8">
-                                                <?php
-                                                $intro = GetIntroduction($_SESSION['UserId']);
-                                                if ($intro->num_rows) {
-                                                    $row = $intro->fetch_array(MYSQLI_NUM);
-                                                    print "<p>" . $row[2] . "</p>";
-                                                } else {
-                                                    print "<p>Give a description about yourself</p>";
-                                                }
-                                                ?>
-
-                                                <a onclick="ToggleEdit('#introductionform')" class="btn btn-primary">Edit</a>
-                                                <form method="post" action="profile.php" id="introductionform" style="display: none;">
-                                                    <div class="row">
-                                                        <div class="col-lg-12">
-                                                            <br/>
-                                                            <textarea class="form-control" name="introductionbox"></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-12">
-                                                            <br/>
-                                                            <button type="submit" class="btn btn-primary">Save</button>
-                                                        </div>
-                                                    </div>                                          
-                                                </form>
-                                                <?php
-                                                if (isset($_POST['introductionbox'])) {
-                                                    $introduction = $_POST['introductionbox'];
-
-                                                    SaveIntroduction($_SESSION['UserId'], $introduction);
-                                                }
-                                                ?>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-4">    
-                                                <br/>
-                                                <label>Accomplishments</label>                                   
-                                            </div>
-                                            <div class="col-lg-8">
-                                                <br/>
-                                                <?php
-                                                $accom = GetAccomplishment($_SESSION['UserId']);
-                                                $row = $accom->fetch_array(MYSQLI_NUM);
-
-                                                if ($accom->num_rows && $row[3] != "") {
-                                                    print "<p>" . $row[3] . "</p>";
-                                                } else {
-                                                    print "<p>Give a description about yourself</p>";
-                                                }
-                                                ?>
-
-                                                <a onclick="ToggleEdit('#accomplishmentform')" class="btn btn-primary">Edit</a>
-                                                <form method="post" action="profile.php" id="accomplishmentform" style="display: none;">
-                                                    <div class="row">
-                                                        <div class="col-lg-12">                                                   
-                                                            <textarea class="form-control" name="accomplishmentbox"></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-12">
-                                                            <br/>
-                                                            <button type="submit" class="btn btn-primary">Save</button>
-                                                        </div>
-                                                    </div>                                           
-                                                </form>
-                                                <?php
-                                                if (isset($_POST['accomplishmentbox'])) {
-                                                    $accomplishment = $_POST['accomplishmentbox'];
-
-                                                    SaveAccomplishment($_SESSION['UserId'], $accomplishment);
-                                                }
-                                                ?>
-                                            </div>
-                                        </div>   
-                                    </div>
-                                   
-                                </div>
-                                                           
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="panel panel-default panelHeight">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <h3>Contact Info</h3>
-                                </div>                               
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-2">
-                                    <label>Home</label>                                  
-                                </div>
-                                <div class="col-lg-10">
-                                    <?php
-                                            $contact = GetContact($_SESSION['UserId']);
-                                            $row = $contact->fetch_array(MYSQLI_NUM);
-                                            
-                                            if($contact->num_rows && $row[2] != "")
-                                            {                                               
-                                                print "<p>" . $row[2] . "</p>";
-                                            }
-                                            else
-                                            {
-                                                print "<p>Ask for home number</p>";
-                                            }
-                                        ?>
-                                    
-                                    <button type="button" class="btn btn-primary" onclick="ToggleEdit('#homeform')">Edit</button>
-                                    <form method="post" action="profile.php" id="homeform" style="display: none;">
-                                        <div class="row">
-                                            <div class="col-lg-12">   
-                                                <br/>
-                                                <input type="text" class="form-control" name="hometextbox"></input>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <br/>
-                                                <button type="submit" class="btn btn-primary">Save</button>
-                                            </div>
-                                        </div>                                           
-                                    </form>
-                                    <?php
-                                            if(isset($_POST['hometextbox']))
-                                            {
-                                                $home = $_POST['hometextbox'];
-                                                
-                                                SaveHomePhone($_SESSION['UserId'], $home);                                                                                              
-                                            }
-                                        ?>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-2">
-                                    <br/>
-                                    <label>Cell</label>                                  
-                                </div>
-                                <div class="col-lg-10">
-                                    <br/>
-                                    <?php
-                                            $contact = GetContact($_SESSION['UserId']);
-                                            $row = $contact->fetch_array(MYSQLI_NUM);
-                                            
-                                            if($contact->num_rows && $row[3] != "")
-                                            {                                               
-                                                print "<p>" . $row[3] . "</p>";
-                                            }
-                                            else
-                                            {
-                                                print "<p>Ask for mobile number</p>";
-                                            }
-                                        ?>
-                                   
-                                    <button type="button" class="btn btn-primary" onclick="ToggleEdit('#cellform')">Edit</button>
-                                    <br/>
-                                    <form method="post" action="profile.php" id="cellform" style="display: none;">
-                                        <div class="row">
-                                            <div class="col-lg-12">   
-                                                <br/>
-                                                <input type="text" class="form-control" name="celltextbox"></input>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <br/>
-                                                <button type="submit" class="btn btn-primary">Save</button>
-                                            </div>
-                                        </div>                                           
-                                    </form>
-                                    <?php
-                                            if(isset($_POST['celltextbox']))
-                                            {
-                                                $cell = $_POST['celltextbox'];
-                                                
-                                                SaveCellPhone($_SESSION['UserId'], $cell);                                                                                              
-                                            }
-                                        ?>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-2">
-                                    <br/>
-                                    <label>Email</label>                                  
-                                </div>
-                                <div class="col-lg-10">
-                                    <br/>
-                                    <?php
-                                            $contact = GetContact($_SESSION['UserId']);
-                                            $row = $contact->fetch_array(MYSQLI_NUM);
-                                            
-                                            if($contact->num_rows && $row[4] != "")
-                                            {                                               
-                                                print "<p>" . $row[4] . "</p>";
-                                            }
-                                            else
-                                            {
-                                                print "<p>Ask for mobile number</p>";
-                                            }
-                                        ?>
-                                    
-                                    <button type="button" class="btn btn-primary" onclick="ToggleEdit('#emailform')">Edit</button>
-                                    <form method="post" action="profile.php" id="emailform" style="display: none;">
-                                        <div class="row">
-                                            <div class="col-lg-12">   
-                                                <br/>
-                                                <input type="text" class="form-control" name="emailtextbox"></input>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <br/>
-                                                <button type="submit" class="btn btn-primary">Save</button>
-                                            </div>
-                                        </div>                                           
-                                    </form>
-                                     <?php
-                                            if(isset($_POST['emailtextbox']))
-                                            {
-                                                $email = $_POST['emailtextbox'];
-                                                
-                                                SaveEmail($_SESSION['UserId'], $email);                                                                                              
-                                            }
-                                        ?>
                                 </div>
                             </div>
                         </div>
+
                     </div>
-                    
-                </div>
-                <div class="col-lg-4">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <h3>Personal Links</h3>
+                    <div class="col-lg-4">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h3>Personal Links</h3>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-9">
-                                    <button type="button" class="btn btn-primary" onclick="ToggleEdit('#linkform')">Add Link</button>
-                                </div>
-                            </div>
-                            <form method="post" action="profile.php" id="linkform" style="display: none;">
                                 <div class="row">
                                     <div class="col-lg-9">
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <input type="text" name="secondtypelabel" style="display: none;"/>
-                                                <br/>
-                                                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                    Link Type
-                                                    <span class="caret"></span>
-                                                </button>
-                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                                    <li><a id="FaceBookLink" aria-hidden="true" style="color : blue;"><i class="fa fa-facebook-square"></i> Facebook</a></li>
-                                                    <li><a id="GooglePlusLink"><i class="fa fa-google-plus-square" aria-hidden="true" style="color: red;"></i> Google Plus</a></li>
-                                                    <li><a id="YouTubeLink"><i class="fa fa-youtube-square" aria-hidden="true" style="color: red;"></i> You Tube</a></li>                                            
-                                                    <li><a id="LinkedInLink"><i class="fa fa-linkedin-square" aria-hidden="true" style="color: blue;"></i> Linked In</a></li>
-                                                    <li><a id="TwitterLink"><i class="fa fa-twitter" aria-hidden="true" style="color: cyan;"></i> Twitter</a></li>
-                                                    <li><a id="PersonalLink">Personal</a></li>
-                                                </ul>
-                                                <label id="typelabel"/><br/>
-                                                
-                                            </div>
-                                            
+                                        <button type="button" class="btn btn-primary" onclick="ToggleEdit('#linkform')">Add Link</button>
+                                    </div>
+                                </div>
+                                <form method="post" action="profile.php" id="linkform" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-lg-9">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <input type="text" name="secondtypelabel" style="display: none;"/>
+                                                    <br/>
+                                                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                        Link Type
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                                        <li><a id="FaceBookLink" aria-hidden="true" style="color : blue;"><i class="fa fa-facebook-square"></i> Facebook</a></li>
+                                                        <li><a id="GooglePlusLink"><i class="fa fa-google-plus-square" aria-hidden="true" style="color: red;"></i> Google Plus</a></li>
+                                                        <li><a id="YouTubeLink"><i class="fa fa-youtube-square" aria-hidden="true" style="color: red;"></i> You Tube</a></li>                                            
+                                                        <li><a id="LinkedInLink"><i class="fa fa-linkedin-square" aria-hidden="true" style="color: blue;"></i> Linked In</a></li>
+                                                        <li><a id="TwitterLink"><i class="fa fa-twitter" aria-hidden="true" style="color: cyan;"></i> Twitter</a></li>
+                                                        <li><a id="PersonalLink">Personal</a></li>
+                                                    </ul>
+                                                    <label id="typelabel"/><br/>
+
+                                                </div>
+
                                             </div>
                                             <div class="dropdown">
-                                               
+
+                                            </div>
+                                            <div class="form-group">
+                                                <br/>
+                                                <label>Link Text</label>
+                                                <input type="text" class="form-control" name="texttextbox"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>URL</label>
+                                                <input type="text" class="form-control" name="urltextbox"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary">Add</button>
+                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <br/>
-                                            <label>Link Text</label>
-                                            <input type="text" class="form-control" name="texttextbox"/>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>URL</label>
-                                            <input type="text" class="form-control" name="urltextbox"/>
-                                        </div>
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary">Add</button>
-                                        </div>
-                                    </div>
-                                </div>                               
-                                
-                            </form>
-                            <br/>
-                            <?php 
-                                    if(isset($_POST['secondtypelabel']))
-                                    {
-                                        $type = $_POST['secondtypelabel'];
-                                        $text = $_POST['texttextbox'];
-                                        $url = $_POST['urltextbox'];
-                                        
-                                        SaveLink($_SESSION['UserId'], $type, $text, $url);
-                                    }
-                                    
-                                    $links = GetLink($_SESSION['UserId']);
-                                    $num = $links->num_rows;
-                                    
-                                    for($i = 0; $i < $num; ++$i)
-                                    {
-                                        $row = $links->fetch_array(MYSQLI_ASSOC);
-                                        
-                                        print "<form method='post' action='profile.php'>";
-                                        print "<div class='row'>\n";
-                                        print "<div class='col-lg-4'>";
-                                        print GetLinkIcon($row['Type']) . "\n";
-                                        print "<label>" . $row['Type'] . "</label>\n";
-                                        print "</div>\n";
-                                        print "<div class='col-lg-5' style='padding-top : 0.5em;'>\n";
-                                        print "<a href='" . $row['URL'] . "' target='_blank'>" . $row['Text'] . "</a>\n";
-                                        print "</div>\n";
-                                        print "<div class='col-lg-1'>\n";
-                                        print "<input type='hidden' name='id' value='" . $row['Id'] . "'></input>";
-                                        print "<button type='submit' class='btn btn-primary'>Remove</button>";
-                                        print "</div>\n";
-                                        print "</div>\n";
-                      
-                                        print "</form>\n";
-                                    }
-                                    
-                                    if(isset($_POST['id']))
-                                    {
-                                        $id = $_POST['id'];
-                                        DeleteLink($id);
-                                    }
-                            ?>
+                                    </div>                               
+
+                                </form>
+                                <br/>
+<?php
+if (isset($_POST['secondtypelabel'])) {
+    $type = $_POST['secondtypelabel'];
+    $text = $_POST['texttextbox'];
+    $url = $_POST['urltextbox'];
+
+    SaveLink($_SESSION['UserId'], $type, $text, $url);
+}
+
+$links = GetLink($_SESSION['UserId']);
+$num = $links->num_rows;
+
+for ($i = 0; $i < $num; ++$i) {
+    $row = $links->fetch_array(MYSQLI_ASSOC);
+
+    print "<form method='post' action='profile.php'>";
+    print "<div class='row'>\n";
+    print "<div class='col-lg-4'>";
+    print GetLinkIcon($row['Type']) . "\n";
+    print "<label>" . $row['Type'] . "</label>\n";
+    print "</div>\n";
+    print "<div class='col-lg-5' style='padding-top : 0.5em;'>\n";
+    print "<a href='" . $row['URL'] . "' target='_blank'>" . $row['Text'] . "</a>\n";
+    print "</div>\n";
+    print "<div class='col-lg-1'>\n";
+    print "<input type='hidden' name='id' value='" . $row['Id'] . "'></input>";
+    print "<button type='submit' class='btn btn-primary'>Remove</button>";
+    print "</div>\n";
+    print "</div>\n";
+
+    print "</form>\n";
+}
+
+if (isset($_POST['id'])) {
+    $id = $_POST['id'];
+    DeleteLink($id);
+}
+?>
+                            </div>
                         </div>
                     </div>
+                </div>
+                </div>
+            </div>
+            <div id="photos" class="tab-pane fade">
+                <div class="container-fluid" style="padding-top: 5vh;">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                     <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                                <!-- Indicators -->
+                                <ol class="carousel-indicators">
+                                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                                    <li data-target="#myCarousel" data-slide-to="1"></li>
+                                    <li data-target="#myCarousel" data-slide-to="2"></li>
+                                    <li data-target="#myCarousel" data-slide-to="3"></li>
+                                </ol>
+
+                                <!-- Wrapper for slides -->
+                                <div class="carousel-inner" role="listbox">
+                                    <div class="item active">
+                                        <img src="Photos/3f9b7c4.jpg"  alt="Chania" style="width: 100%; height: 50%;">
+                                    </div>
+
+                                    <div class="item">
+                                        <img src="Photos/3f9b7c4.jpg"  alt="Chania" style="width: 100%; height: 50%;">
+                                    </div>
+
+                                    <div class="item">
+                                        <img src="Photos/3f9b7c4.jpg"  alt="Flower" style="width: 100%; height: 50%;">
+                                    </div>
+
+                                    <div class="item">
+                                        <img src="Photos/3f9b7c4.jpg"  alt="Flower" style="width: 100%; height: 50%;">
+                                    </div>
+                                </div>
+
+                                <!-- Left and right controls -->
+                                <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+                                </div>
+                            </div>
+                           
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <img src="Photos/3f9b7c4.jpg"  alt="Chania" style="width: 100%; height: 20vh;">
+                                        </div>
+                                    </div>                                   
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <img src="Photos/3f9b7c4.jpg"  alt="Chania" style="width: 100%; height: 20vh;">
+                                        </div>
+                                    </div>                                   
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <img src="Photos/3f9b7c4.jpg"  alt="Chania" style="width: 100%; height: 20vh;">
+                                        </div>
+                                    </div>                                   
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <img src="Photos/3f9b7c4.jpg"  alt="Chania" style="width: 100%; height: 20vh;">
+                                        </div>
+                                    </div>                                   
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <img src="Photos/3f9b7c4.jpg"  alt="Chania" style="width: 100%; height: 20vh;">
+                                        </div>
+                                    </div>                                   
+                                </div>
+                            </div>                               
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            
         </div>  
+            
+         
+    </div>
     </body>
 </html>
 
